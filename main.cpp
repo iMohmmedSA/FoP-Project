@@ -1,7 +1,6 @@
 #include <iostream> // Usage get input send output
 #include <fstream>  // Usage store data
 #include <vector>   // Usage store data
-
 using namespace std;
 
 struct Homework
@@ -94,7 +93,6 @@ void loadData() // load data from userEE.file
     {
         cout << "# File corrupted - #002" << endl;
     }
-
     userFile.close(); // Close File
 }
 
@@ -129,13 +127,26 @@ void saveData()                         // save Data to userEE.file
     data += "`#\n-"; // End
 
     createFile << data; // Save Data
-    createFile.close(); // colse the file
+    createFile.close();
+
+    // Set data to default
+    homeworkList.clear(); // Erase all homework data on memory
+    studentList.clear();  // Erase all studtent data on memory
+    homeworkSize = 0;
+    studentSize = 0;
 }
 
 // Menu
 void homeMenu();
 int main()
 {
+    ifstream userFile("userEE.file");
+    if (!userFile.good()) // check if there is not userEE.file file
+    {
+        ofstream createFile("userEE.file");     // Create userEE.file file
+        createFile << "student: 0 homework: 0"; // Set up the file
+        createFile.close();                     // colse the file
+    }
     homeMenu();
 }
 
@@ -171,6 +182,7 @@ void handleCin(int &selected, int from, int to)
             }
         }
     }
+    cin.ignore();
 }
 
 void homeMenu()
@@ -248,12 +260,18 @@ void newStudentMenu(int &selected) // Add new student to the system
 
 void newHomeworkMenu(int &selected)
 {
-    system("clear"); // Put your code under this line
-    // Add new homework code here
-    cout << "newHomeworkMenu\n";
-    cout << "Write 0: ";
+    system("clear");    // Put your code under this line
+    string info = "EE"; // temp
+    loadData();         // Load Data
 
-    cin >> selected;
+    cout << "Add New Homewrok\n\n";                  // Title
+    cout << "   Example: English 101 Page:23 Q2\n";  // Example for input
+    cout << "   Write information about homework: "; // Asking for input
+    getline(cin, info);                              // user write information about homework
+    homeworkSize++;                                  // Increase homework size
+    homeworkList.push_back(info);                    // append homework to homework list
+    saveData();
+    selected = 0; // Back to main menu
 }
 
 void assignHomework(int &selected)
