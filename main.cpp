@@ -24,7 +24,7 @@ vector<Student> studentList; // using Dynamic Array
 int homeworkSize = 0;        // homework size
 vector<string> homeworkList; // using Dynaimc Array
 
-void loadData() // load data from test1.config
+void loadData() // load data from userEE.file
 {
     ifstream userFile("userEE.file"); // select the file to check / Open file
     string temp, tempNum;             // temporary value
@@ -50,7 +50,7 @@ void loadData() // load data from test1.config
         if (temp == "student:")       // check if it student line
         {
             Student student; // temporary value
-            
+
             getline(userFile, student.firstName, ' '); // Get first name
             getline(userFile, student.lastName, ' ');  // Get last name
             getline(userFile, student.Id, ' ');        // Get ID
@@ -98,14 +98,14 @@ void loadData() // load data from test1.config
     userFile.close(); // Close File
 }
 
-void saveData()                          // save Data to userEE.file
-{                                        //
-    string data;                         // Store data
+void saveData()                         // save Data to userEE.file
+{                                       //
+    string data;                        // Store data
     ofstream createFile("userEE.file"); // Create userEE.file file
 
     data += "students: " + to_string(studentSize) + " homeworks: " + to_string(homeworkSize) + " #\n"; // Ouput Example - students: 0 homeworks: 0 #
 
-    for (size_t i = 0; i < studentSize; i++) // add students to data 
+    for (size_t i = 0; i < studentSize; i++) // add students to data
     {
         //  Output Example - student: fristName lastName Id Homework(Int)
         data += "student: " + studentList[i].firstName + " " + studentList[i].lastName + " " + studentList[i].Id + " " + to_string(studentList[i].homeworkSize) + " ";
@@ -126,7 +126,7 @@ void saveData()                          // save Data to userEE.file
         data += "`" + homeworkList[i];
     }
 
-    data += "`#\n-"; // End 
+    data += "`#\n-"; // End
 
     createFile << data; // Save Data
     createFile.close(); // colse the file
@@ -140,7 +140,6 @@ int main()
 }
 
 void homeMenuOption(int &selected);
-
 void newStudentMenu(int &selected);
 void newHomeworkMenu(int &selected);
 void assignHomework(int &selected);
@@ -148,6 +147,31 @@ void searchStudent(int &selected);
 void list(int &selected);
 void updateStudent(int &selected);
 void remove(int &selected);
+
+void handleCin(int &selected, int from, int to)
+{
+    int input;
+    cin >> input;
+    if (0 < input && input < 8)
+    {
+        selected = input;
+    }
+    else
+    {
+        while (true)
+        { // To handle String or double input -- https://www.codegrepper.com/code-examples/cpp/how+to+make+sure+the+user+inputs+a+int+and+not+anything+else+c%2B%2B
+            cout << "Error: choice " << from << " to " << to << endl;
+            cin.clear();
+            cin.ignore(256, '\n');
+            cin >> input;
+            if (0 < input && input < 8)
+            {
+                selected = input;
+                break;
+            }
+        }
+    }
+}
 
 void homeMenu()
 {
@@ -189,7 +213,6 @@ void homeMenu()
 void homeMenuOption(int &selected)
 {
     system("clear");
-    int input;
 
     cout << "Welcome\n\n";
     cout << "	[1] Add new student\n";
@@ -199,38 +222,28 @@ void homeMenuOption(int &selected)
     cout << "	[5] Student & Homework list\n";
     cout << "	[6] Update student information\n";
     cout << "	[7] Delete student or homework record\n";
-    cout << "Enter choice:\n";
-    cin >> input;
-
-    if (0 < input && input < 8)
-    {
-        selected = input;
-    }
-    else
-    {
-        while (true)
-        { // To hundle String or double input -- https://www.codegrepper.com/code-examples/cpp/how+to+make+sure+the+user+inputs+a+int+and+not+anything+else+c%2B%2B
-            cout << "Error: Choose 1 to 7" << endl;
-            cin.clear();
-            cin.ignore(256, '\n');
-            cin >> input;
-            if (0 < input && input < 8)
-            {
-                selected = input;
-                break;
-            }
-        }
-    }
+    cout << "Enter choice: ";
+    handleCin(selected, 1, 7);
 }
 
-void newStudentMenu(int &selected)
+void newStudentMenu(int &selected) // Add new student to the system
 {
     system("clear"); // Put your code under this line
-    // Add new studnt code here
-    cout << "newStudentMenu\n";
-    cout << "Write 0: ";
+    loadData();      // Load Data
+    Student student; // temp
 
-    cin >> selected;
+    cout << "Add New Student\n"; // Title
+    cout << "   First Name: ";   // Asking for input
+    cin >> student.firstName;    // user should write first student's first name
+    cout << "   Last Name: ";    // Asking for input
+    cin >> student.lastName;     // user should write first student's last name
+    cout << "   ID: ";           // Asking for input
+    cin >> student.Id;           // user should write first student's id
+    student.homeworkSize = 0;
+    studentSize++;
+    studentList.push_back(student); // append student to student list
+    saveData();                     // Save Data :)
+    selected = 0;
 }
 
 void newHomeworkMenu(int &selected)
