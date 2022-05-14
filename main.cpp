@@ -1,325 +1,258 @@
-#include <iostream> // Usage get input send output
-#include <fstream>  // Usage store data
-#include <vector>   // Usage store data
+#include <iostream>
 using namespace std;
-
-struct Homework
+// structure  for homework details
+struct homework
 {
-    string subject; // English 101(subject)
-    bool isDone;    // is homework done - Note 1 mean Done, 0 mean isn't done
+    string subject;
+    string h_name;
+    double signs;
 };
-
-struct Student
+// structure for student details
+struct student
 {
-    string firstName;          // Student First name
-    string lastName;           // Student last name
-    string Id;                 // University id
-    int homeworkSize;          // Keep up with Vector size
-    vector<Homework> homework; // Work like Dynamic Array
-};
-
-int studentSize = 0;         // student size
-vector<Student> studentList; // using Dynamic Array
-int homeworkSize = 0;        // homework size
-vector<string> homeworkList; // using Dynaimc Array
-
-void loadData() // load data from userEE.file
-{
-    ifstream userFile("userEE.file"); // select the file to check / Open file
-    string temp, tempNum;             // temporary value
-
-    if (!userFile.good()) // check if there is not userEE.file file
-    {
-        ofstream createFile("userEE.file");     // Create userEE.file file
-        createFile << "student: 0 homework: 0"; // Set up the file
-        createFile.close();                     // colse the file
-    }
-
-    getline(userFile, temp, ' ');    // Skip to next word
-    getline(userFile, tempNum, ' '); // Student Count
-    studentSize = stoi(tempNum);     // convert string to int
-    getline(userFile, temp, ' ');    // Skip to next word
-    getline(userFile, tempNum, ' '); // Homework Count
-    homeworkSize = stoi(tempNum);    // convert string to int
-
-    for (int i = 0; i < studentSize; i++) // Get student array
-    {
-        getline(userFile, temp);      // Skip to next line
-        getline(userFile, temp, ' '); // Skip to word
-        if (temp == "student:")       // check if it student line
-        {
-            Student student; // temporary value
-
-            getline(userFile, student.firstName, ' '); // Get first name
-            getline(userFile, student.lastName, ' ');  // Get last name
-            getline(userFile, student.Id, ' ');        // Get ID
-            getline(userFile, tempNum, ' ');           // Get homework array size
-            student.homeworkSize = stoi(tempNum);      // convert string to int
-
-            studentList.push_back(student); // append student to student list
-
-            for (int j = 0; j < stoi(tempNum); j++) // Get homework array
-            {
-                Homework homework; // temporary value
-                string isDoneS;    // temporary value
-
-                getline(userFile, homework.subject, '`');    // Get homework subject
-                getline(userFile, temp, ' ');                // Skip to next line
-                getline(userFile, isDoneS, ' ');             // Get isDone - Note 1 mean Done, 0 mean isn't done
-                homework.isDone = stoi(isDoneS);             // convert string to int
-                studentList[i].homework.push_back(homework); // Append homework to student
-            }
-        }
-        else if (temp == "-") // Check if file corrupted
-        {
-            cout << "# File corrupted - #001" << endl; // show that the file corrupted
-            break;
-        }
-    }
-
-    getline(userFile, temp);      // Skip to next line
-    getline(userFile, temp);      // Skip to next line
-    getline(userFile, temp, '`'); // Skip to next word
-
-    if (temp == "homework:") // check if it student line
-    {
-        for (size_t i = 0; i < homeworkSize; i++) // load homework list
-        {
-            getline(userFile, temp, '`'); // Skip to next word
-            homeworkList.push_back(temp); // append homework to homework list
-        }
-    }
-    else if (temp == "-") // Get homework
-    {
-        cout << "# File corrupted - #002" << endl;
-    }
-    userFile.close(); // Close File
-}
-
-void saveData()                         // save Data to userEE.file
-{                                       //
-    string data;                        // Store data
-    ofstream createFile("userEE.file"); // Create userEE.file file
-
-    data += "students: " + to_string(studentSize) + " homeworks: " + to_string(homeworkSize) + " #\n"; // Ouput Example - students: 0 homeworks: 0 #
-
-    for (size_t i = 0; i < studentSize; i++) // add students to data
-    {
-        //  Output Example - student: fristName lastName Id Homework(Int)
-        data += "student: " + studentList[i].firstName + " " + studentList[i].lastName + " " + studentList[i].Id + " " + to_string(studentList[i].homeworkSize) + " ";
-
-        // Output Example - subject`isDone 0 #
-        for (size_t j = 0; j < studentList[i].homeworkSize; j++)
-        {
-            // Output Example - subject`isDone 0
-            data += studentList[i].homework[j].subject + "`isDone " + to_string(studentList[i].homework[j].isDone) + " ";
-        }
-        data += "#\n"; // Next line
-    }
-
-    data += "-\nhomework:"; // set up homework Array
-
-    for (size_t i = 0; i < homeworkSize; i++)
-    {
-        data += "`" + homeworkList[i];
-    }
-
-    data += "`#\n-"; // End
-
-    createFile << data; // Save Data
-    createFile.close();
-
-    // Set data to default
-    homeworkList.clear(); // Erase all homework data on memory
-    studentList.clear();  // Erase all studtent data on memory
-    homeworkSize = 0;
-    studentSize = 0;
-}
-
-// Menu
-void homeMenu();
+    string s_id;
+    string s_name;
+    string year;
+    struct homework h;
+} students[20];
 int main()
 {
-    ifstream userFile("userEE.file");
-    if (!userFile.good()) // check if there is not userEE.file file
-    {
-        ofstream createFile("userEE.file");     // Create userEE.file file
-        createFile << "student: 0 homework: 0"; // Set up the file
-        createFile.close();                     // colse the file
-    }
-    homeMenu();
-}
 
-void homeMenuOption(int &selected);
-void newStudentMenu(int &selected);
-void newHomeworkMenu(int &selected);
-void assignHomework(int &selected);
-void searchStudent(int &selected);
-void list(int &selected);
-void updateStudent(int &selected);
-void remove(int &selected);
-
-void handleCin(int &selected, int from, int to)
-{
-    int input;
-    cin >> input;
-    if (0 < input && input < 8)
+    // Variables
+    int ch, s_count = 0, h_count = 0;
+    string n1, n2;
+    struct homework hw[10];
+    cout << "Student Homework management" << endl;
+    do
     {
-        selected = input;
-    }
-    else
-    {
-        while (true)
-        { // To handle String or double input -- https://www.codegrepper.com/code-examples/cpp/how+to+make+sure+the+user+inputs+a+int+and+not+anything+else+c%2B%2B
-            cout << "Error: choice " << from << " to " << to << endl;
-            cin.clear();
-            cin.ignore(256, '\n');
-            cin >> input;
-            if (0 < input && input < 8)
-            {
-                selected = input;
-                break;
-            }
-        }
-    }
-    cin.ignore();
-}
-
-void homeMenu()
-{
-    system("clear");
-    int selected = 0;
-    while (true)
-    {
-        switch (selected)
+        // Menu
+        cout << " \nl.  Add new student" << endl;
+        cout << "2. Add new homework" << endl;
+        cout << "3. Assign homework to student" << endl;
+        cout << "4. Find student details" << endl;
+        cout << "5. Student list" << endl;
+        cout << "6. Homework list" << endl;
+        cout << "7. Update student details" << endl;
+        cout << " 8. Delete student/homework" << endl;
+        cout << "enter your choice:" << endl;
+        // get the user's choice
+        cin >> ch;
+        cin.ignore();
+        switch (ch)
         {
-        case 0:
-            homeMenuOption(selected);
-            break;
         case 1:
-            newStudentMenu(selected);
-            break;
-        case 2:
-            newHomeworkMenu(selected);
-            break;
-        case 3:
-            assignHomework(selected);
-            break;
-            cin >> selected;
-        case 4:
-            searchStudent(selected);
-            break;
-        case 5:
-            list(selected);
-            break;
-        case 6:
-            updateStudent(selected);
-            break;
-        case 7:
-            remove(selected);
+        {
+            // add new student
+            //  get student details)
+            cout << "enter student ID:" << endl;
+            cin >> students[s_count].s_id;
+            cout << "insert student name:" << endl;
+            cin >> students[s_count].s_name;
+            cout << "Enter the requester class:" << endl;
+            cin >> students[s_count].year;
+            s_count++;
+            // increment of students count
             break;
         }
-    }
-}
+        case 2:
+        {
+            // add new homework
+            // get homework details.
+            cout << "Enter the homework subject:" << endl;
+            cin >> hw[h_count].subject;
+            cout << "Enter the homework name:" << endl;
+            cin >> hw[h_count].h_name;
+            cout << "Enter the maximum marks :" << endl;
+            // ERROR cin >> hw [h_count].marks;
+            cin.ignore();
+            h_count++;
+            // ERROR breaks;
+            // increament the homework coymt
+        }
+        case 3:
+        { // assign the student's homework
+            // get the status of the student's details
+            cout << "enter student ID:" << endl;
+            cin >> n1;
+            cout << "Enter the homework name:" << endl;
+            cin >> n2;
+            for (int i = 0; i < s_count; i++)
+            {
+                if (students[i].s_id == n1)
+                {
+                    for (int j = 0; j < h_count; j++)
+                    {
+                        if (hw[j].h_name == n2)
+                        {
+                            students[i].h = hw[j];
+                            // assign homework to student
+                        }
+                    }
+                }
+            }
+            break;
+        }
 
-void homeMenuOption(int &selected)
-{
-    system("clear");
+        case 4:
+        {
 
-    cout << "Welcome\n\n";
-    cout << "	[1] Add new student\n";
-    cout << "	[2] Add new homework\n";
-    cout << "	[3] Assign homework to student\n";
-    cout << "	[4] Search student details\n";
-    cout << "	[5] Student & Homework list\n";
-    cout << "	[6] Update student information\n";
-    cout << "	[7] Delete student or homework record\n";
-    cout << "Enter choice: ";
-    handleCin(selected, 1, 7);
-}
+            // Search student details
 
-void newStudentMenu(int &selected) // Add new student to the system
-{
-    system("clear"); // Put your code under this line
-    loadData();      // Load Data
-    Student student; // temp
+            cout << "Enter the student id: " << endl;
+            cin >> n1;
 
-    cout << "Add New Student\n"; // Title
-    cout << "   First Name: ";   // Asking for input
-    cin >> student.firstName;    // user should write first student's first name
-    cout << "   Last Name: ";    // Asking for input
-    cin >> student.lastName;     // user should write first student's last name
-    cout << "   ID: ";           // Asking for input
-    cin >> student.Id;           // user should write first student's id
-    student.homeworkSize = 0;
-    studentSize++;
-    studentList.push_back(student); // append student to student list
-    saveData();                     // Save Data :)
-    selected = 0;
-}
+            for (int i = 0; i < s_count; i++)
+            { // Search student array
+                if (students[i].s_id == n1)
+                {
 
-void newHomeworkMenu(int &selected)
-{
-    system("clear");    // Put your code under this line
-    string info = "EE"; // temp
-    loadData();         // Load Data
+                    cout << "Student details: \n--------------" << endl; // Display details.
 
-    cout << "Add New Homewrok\n\n";                  // Title
-    cout << "   Example: English 101 Page:23 Q2\n";  // Example for input
-    cout << "   Write information about homework: "; // Asking for input
-    getline(cin, info);                              // user write information about homework
-    homeworkSize++;                                  // Increase homework size
-    homeworkList.push_back(info);                    // append homework to homework list
-    saveData();
-    selected = 0; // Back to main menu
-}
+                    cout << "Student id: " << students[i].s_id << endl;
 
-void assignHomework(int &selected)
-{
-    system("clear"); // Put your code under this line
-    // Assign homework to student code here
-    cout << "assignHomework\n";
-    cout << "Write 0: ";
+                    cout << "Student name: " << students[i].s_name << endl;
 
-    cin >> selected;
-}
+                    cout << "class: " << students[i].year << endl;
 
-void searchStudent(int &selected)
-{
-    system("clear"); // Put your code under this line
-    // Search student details code here
-    cout << "searchStudent\n";
-    cout << "Write 0: ";
+                    cout << "Homework Assigned: " << students[i].h.h_name << endl;
 
-    cin >> selected;
-}
+                    cout << "Subject: " << students[i].h.subject << endl;
 
-void list(int &selected)
-{
-    system("clear"); // Put your code under this line
-    // Student & Homework list code here
-    cout << "list\n";
-    cout << "Write 0: ";
+                    // errer cout<<"Marks: "<<students[i].h.marks<<endl;
 
-    cin >> selected;
-}
+                    cout << " --------------" << endl;
+                }
+            }
 
-void updateStudent(int &selected)
-{
-    system("clear"); // Put your code under this line
-    // Update student information code here
-    cout << "updateStudent\n";
-    cout << "Write 0: ";
+            break;
+        }
+        case 5:
+        { // Students list
+            cout << "Student details: \n-----------------" << endl;
 
-    cin >> selected;
-}
+            for (int i = 0; i < s_count; i++)
+            { // Display details for all students
+                cout << "Student id: " << students[i].s_id << endl;
 
-void remove(int &selected)
-{
-    system("clear"); // Put your code under this line
-    // Delete student or homework record code here
-    cout << "remove\n";
-    cout << "Write 0: ";
+                cout << "Student name: " << students[i].s_name << endl;
 
-    cin >> selected;
+                cout << "class: " << students[i].year << endl;
+
+                cout << "Homework Assigned: " << students[i].h.h_name << endl;
+
+                cout << "Subject: " << students[i].h.subject << endl;
+
+                // errer cout<<"Marks: "<<students[i].h.marks<<endl;
+
+                cout << "------------------------" << endl;
+            }
+            break;
+        }
+        case 6:
+        { // Homework list
+
+            cout << "Homework details: \n---------------" << endl;
+            for (int i = 0; i < h_count; i++)
+            { // Display details for all homeworks
+
+                cout << "Homework name: " << hw[i].h_name << endl;
+
+                cout << "Subject: " << hw[i].subject << endl;
+
+                // cout<<"Marks: "<<hw[i].marks<<endl;  cout<<"------------------------"<<endl;
+            }
+            break;
+        }
+
+        case 7:
+        { // Update student details
+            cout << "Enter the student id to be updated: " << endl;
+            cin >> n1;
+            for (int i = 0; i < s_count; i++)
+            {
+
+                if (students[i].s_id == n1)
+                { // Search student array
+
+                    // Get the student details and change.
+                    cout << "Student name: " << endl;
+
+                    cin >> students[i].s_name;
+
+                    cout << "class: " << endl;
+
+                    cin >> students[i].year;
+
+                    cout << "Enter the homework name: " << endl;
+
+                    cin >> n2;
+                    for (int j = 0; j < h_count; j++)
+                    { // for homework details.
+
+                        if (hw[j].h_name == n2)
+                        {
+                            students[i].h = hw[j];
+                        }
+                    }
+                }
+            }
+            break;
+        }
+
+        case 8:
+        { // Delete student/homework
+            int c;
+
+            cout << "1.Student In2.Homework" << endl;
+
+            cout << "Enter your choice for deletion:" << endl;
+
+            cin >> c; // Get the choice
+
+            cin.ignore();
+            if (c == 1)
+            { // For student record
+
+                cout << "Enter the student id to be deleted: " << endl;
+                cin >> n1;
+
+                for (int i = 0; i < s_count; i++)
+                {
+
+                    if (students[i].s_id == n1)
+                    {
+                        for (int j = i + 1; j < s_count; j++)
+                        {
+
+                            students[j - 1] = students[j]; // move the elements in the array
+                        }
+                        s_count--; // decrement student coun count
+                    }
+                }
+            }
+
+            else if (c == 2)
+            { // For homework record
+                cout << "Enter the homework name to be deleted: " << endl;
+                cin >> n1;
+                for (int i = 0; i < h_count; i++)
+                {
+                    if (hw[i].h_name == n1)
+                    {
+
+                        for (int j = i + 1; j < h_count; j++)
+                        {
+                            hw[j - 1] = hw[j]; // move the elements in the array
+                        }
+                        h_count--; // decrement homework count
+                    }
+                }
+            }
+            break;
+        }
+        default:
+            exit(0);
+        }
+        // exit
+    } while (1);
 }
